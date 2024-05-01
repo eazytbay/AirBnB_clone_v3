@@ -2,39 +2,37 @@
 """
 This Flask route returns json status response
 """
+from flask import jsonify
+
 from api.v1.views import app_views
-from flask import jsonify, request
 from models import storage
-from flasgger import swag_from
+from models.amenity import Amenity
+from models.city import City
+from models.place import Place
+from models.review import Review
+from models.state import State
+from models.user import User
 
 
-@app_views.route('/status', methods=['GET'])
-@swag_from('swagger_spec/status.yml')
-def status():
-    """
-    function for status route that returns the status
-    """
-    if request.method == 'GET':
-        resp = {"status": "OK"}
-        return jsonify(resp)
+@app_views.route('/status')
+def get_status():
+    '''Gets the status of the API.
+    '''
+    return jsonify(status='OK')
 
 
-@app_views.route('/stats', methods=['GET'])
-@swag_from('swagger_spec/stats.yml')
-def stats():
-    """
-    function to return the count of all class objects
-    """
-    if request.method == 'GET':
-        response = {}
-        PLURALS = {
-            "Amenity": "amenities",
-            "City": "cities",
-            "Place": "places",
-            "Review": "reviews",
-            "State": "states",
-            "User": "users"
-        }
-        for key, value in PLURALS.items():
-            response[value] = storage.count(key)
-        return jsonify(response)
+@app_views.route('/stats')
+def get_stats():
+    '''Gets the number of objects for each type.
+    '''
+    objects = {
+        'amenities': Amenity,
+        'cities': City,
+        'places': Place,
+        'reviews': Review,
+        'states': State,
+        'users': User
+    }
+    for key, value in objects.items():
+        objects[key] = storage.count(value)
+    return jsonify(objects)
