@@ -2,6 +2,8 @@
 """
 This Flask route returns json status response
 """
+#!/usr/bin/python3
+'''Contains the index view for the API.'''
 from flask import jsonify
 
 from api.v1.views import app_views
